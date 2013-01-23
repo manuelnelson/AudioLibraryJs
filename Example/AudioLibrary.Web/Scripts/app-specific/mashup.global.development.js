@@ -1,0 +1,1 @@
+﻿Mashup.properties.sampleFilePath = 'http://mashandmixdev.commondatastorage.googleapis.com/samples/'; //development path (has * for cors)

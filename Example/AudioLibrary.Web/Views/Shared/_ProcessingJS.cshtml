@@ -1,0 +1,218 @@
+﻿<!--Processing.js code-->
+<script type="text/processing" data-processing-target="sampleWaveform">
+    int width;
+    int height;
+    int waveStart = 0;
+    int waveEnd = 0;
+    int totalWaveLength = 0; //length of overall sample
+    float[] samples; //contains PCM data of sample
+    background( 230, 242, 236 );
+    stroke(152,0,0); 
+    int resolutionScale = 5000;//this is a somewhat random number.  Has good performance and decent waveform visualization. Increase for better resolution (and worse performance), decrease for worse resolution 
+    int xMouse = 0  ;
+    void addSample(float[] sample, int length){        
+        samples = sample;
+        totalWaveLength = length;
+        waveEnd = length;
+        drawSample(0, totalWaveLength);
+    }   
+    
+    void drawSample(int begin, int end){
+        float scale = (end - begin) / width;
+        int resolution = floor((end - begin)/resolutionScale); 
+        background( 105, 155, 200);  
+        for(int i=begin; i<end-1;i=i+resolution){
+            line((i-begin)/scale,samples[i]*100+100,(i+resolution - begin)/scale,samples[i+resolution]*100+100);        
+        }
+    }    
+    void setSize(int fullWidth, int fullHeight){
+        width = fullWidth;
+        height = fullHeight;
+        size( width, height );
+    }
+    
+    int getWaveformStart(){
+        return waveStart;        
+    }
+    
+    int getWaveformEnd(){
+        return waveEnd;
+    }
+    
+//    void mouseScrolled() {
+//        if (mouseScroll > 0) {
+//            zoomIn();
+//        } else if (mouseScroll < 0) {
+//            zoomOut();
+//        }
+//    }
+    void zoomIn(){
+        //zoom in by factor of 2. Retrieve new start and end and do boundary checking            
+        float curLength = waveEnd - waveStart;
+        waveEnd = floor(waveStart + curLength/2);
+        drawSample(waveStart, waveEnd);        
+    }
+    void zoomInSelected(int start, int end){
+        //zoom in on selection
+        waveStart = start;            
+        waveEnd = end;
+        drawSample(waveStart, waveEnd);        
+    }
+    void zoomOut(){
+        //zoom out by factor of 2. Retrieve new start and end and do boundary checking            
+        float center = waveStart + (waveEnd - waveStart) / 2;
+        float curLength = waveEnd - waveStart;
+        waveStart = floor(center - curLength);
+        waveStart = (waveStart < 0) ? 0: waveStart;
+          
+        waveEnd = floor(center + curLength);
+        waveEnd = (waveEnd > totalWaveLength) ? totalWaveLength: waveEnd;
+        drawSample(waveStart, waveEnd);           
+    }
+    void clear(){
+        background( 230, 242, 236 );
+    }
+</script>
+<script type="text/processing" data-processing-target="sampleTrim">
+    int width;
+    int height;
+    background(0,0,0,0);
+    int xMin = 0;
+    int xMax = 0;
+    int xClick;
+    boolean selected = false;    
+    noStroke();
+    noFill();
+    int moveSelectionRange = 10;
+    void setSize(int fullWidth, int fullHeight){
+        width = fullWidth;
+        height = fullHeight;
+        size( width, height );
+    }
+    void mousePressed(){
+        //Moves minimum selection if click is within specific range of previous minimum
+        if(xMin > mouseX - moveSelectionRange && xMin < mouseX + moveSelectionRange && xMax != width){
+            xMin = mouseX;
+            xClick = xMax;
+            return;
+        }
+        //Moves maximum selection if click is within specific range of previous maximum
+        else if(xMax > mouseX - moveSelectionRange && xMax < mouseX + moveSelectionRange){
+            xMax = mouseX;
+            xClick = xMin;
+            return;
+        }
+        //clear previous fill
+        background(0,0,0,0);
+        xClick = mouseX;
+    }
+    void mouseReleased(){
+        if(xMax != xClick && xMin != xClick){
+            //no dragging occurred. Clear selection
+            clear();
+            xMin = xClick;
+            xMax = width;
+            selected = false;
+            $('#sampleWaveform').audioViewer('movePlayIndicator');
+            //If we're already playing the sample, go ahead and keep playing with new location
+            if($('#sampleWaveform').audioViewer('isPlaying')){
+                $('#sampleWaveform').audioViewer('stop');
+                $('#sampleWaveform').audioViewer('play');
+            }
+        }
+        noFill();
+    }
+    void mouseDragged(){
+        if(mouseX < xClick){
+            xMax = xClick;
+            xMin = mouseX;
+        }
+        else{
+            xMin = xClick;
+            xMax = mouseX;
+        }
+        background(0,0,0,0);
+        fill(#333333, 80);        
+        rect(xMin, 0, xMax - xMin, height );
+        selected = true;
+    }
+	void setTrim(int min, int max){
+		xMin = min;
+		xMax = max;
+        background(0,0,0,0);
+        fill(#333333, 80);        
+        rect(xMin, 0, xMax - xMin, height );
+        selected = true;
+	}
+    int getMin(){     
+        return xMin;
+    }
+    int getMax(){     
+        return xMax;
+    }
+    boolean isSelected(){
+        return selected;
+    }
+    void clear(){
+        background(0,0,0,0);
+        xMax = width;
+        xMin = 0; 
+        selected = false;
+        $('#sampleWaveform').audioViewer('movePlayIndicator');
+    }
+</script>
+<script type="text/processing" data-processing-target="samplePlayIndex">    
+    int width;
+    int height;
+    background(0,0,0,0);
+    int frameFrequency = 24;//24 Hz
+    int selectedLength;
+    float currentPosition;
+    float beginPosition;
+    float maxPosition;
+    float delta;
+    int counter = 0;
+    int counterMax;
+    frameRate(frameFrequency);    
+    void setSize(int fullWidth, int fullHeight){
+        width = fullWidth;
+        height = fullHeight;
+        size( width, height );
+        noLoop();
+    }
+    void draw(){
+        background(0,0,0,0);        
+        stroke(152,0,0); 
+        line(currentPosition,0,currentPosition,height);        
+        currentPosition += delta;
+        counter++;
+        if(counter >= counterMax){
+            currentPosition = beginPosition;
+            counter = 0;
+        }
+    }
+    //windowSamples is number of samples in window
+    //currentSample is the start position in samples relative to the first sample in the window
+    //numberSamplesSelected is number of samples that is selected (aka what is played). This will equal
+    //windowLength if nothing is selected.
+    void play(){
+        loop();
+    }
+    void setupPlay(int windowSamples, int currentSample, int numberSamplesSelected, int sampleRate){
+        beginPosition = (currentSample/windowSamples) * width;
+        currentPosition= beginPosition;
+        counter = 0;
+        float duration = (1/sampleRate) * numberSamplesSelected;
+        delta = (1/frameFrequency) * (1/duration) * (numberSamplesSelected/windowSamples) * width;//move current position by         
+        maxPosition = ((currentSample + numberSamplesSelected) / windowSamples) * width;
+        counterMax = floor((maxPosition - beginPosition)/delta); //noticed lagging without this counter.  Works perfectly with counter though by math this isn't exact.
+        
+        //draw first line
+        background(0,0,0,0);        
+        stroke(152,0,0); 
+        line(currentPosition,0,currentPosition,height);        
+    }
+    void stop(){
+        noLoop();
+    }
+</script>

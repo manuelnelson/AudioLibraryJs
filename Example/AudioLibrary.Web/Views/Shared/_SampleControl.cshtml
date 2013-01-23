@@ -1,0 +1,98 @@
+﻿<div id="sampleSugar">
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span8">
+                <h3>
+                    Sample Sugar</h3>
+            </div>
+            <div class="span8">
+                <i class='icon-remove pull-right' style="margin-top: 3px;" title="End Edit"></i>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span3 sampleEffects">
+                <label>Effect Type</label>
+                <select id="effectList">
+                    <!--This needs to match the effect list in the audioplayer-->
+                    <option value="-1">No Effect</option>
+                    <option value="0" data-url="/Content/effects/backslap1.wav" data-dry="0.5" data-wet="1">Backslap</option>
+@*                    <option value="1" data-url="/Content/effects/diffusor3.wav" data-dry="1" data-wet="1">Diffusor</option>*@ 
+                    <option value="2" data-url="/Content/effects/filter-hipass5000.wav" data-dry="0" data-wet="4">High Pass</option>
+                    <option value="3" data-url="/Content/effects/filter-lopass160.wav" data-dry="0" data-wet="0.5">Low Pass</option>
+@*                    <option value="4" data-url="/Content/effects/filter-telephone.wav" data-dry="0" data-wet="1.2">Phone Filter</option>*@
+                    <option value="5" data-url="/Content/effects/spreader50-65ms.wav" data-dry="0.8" data-wet="1.4">Spreader</option>
+                </select><br />
+                <label>Shift Sample</label>
+                <select id="shiftSample">
+                    <option selected="selected">0</option>     
+                    <option value="1">1/16</option>
+                    <option value="2">1/8</option>
+                    <option value="3">3/16</option> 
+                    <option value="4">1/4</option>
+                    <option value="5">5/16</option>
+                    <option value="6">3/8</option> 
+                    <option value="7">7/16</option> 
+                    <option value="8">1/2</option> 
+                    <option value="9">9/16</option> 
+                    <option value="10">5/8</option> 
+                    <option value="11">11/16</option> 
+                    <option value="12">3/4</option> 
+                    <option value="13">13/16</option> 
+                    <option value="14">7/8</option> 
+                    <option value="15">15/16</option> 
+                </select><br/>
+            </div>
+            <div class="span2 slider-container horizontal">
+                <div class="slider-groove ">
+                    <div class="slider-track">
+                    </div>
+                    <div class="slider-thumb" id="pan">
+                    </div>
+                </div>
+                <div class="slider-label">
+                    <span class="pull-left">L</span> <span class="pull-right">R</span><br />
+                    <p>
+                        Pan</p>
+                </div>
+            </div>
+            <div class="span1 slider-container">
+                <div class="slider-groove">
+                    <div class="slider-track">
+                    </div>
+                    <div class="slider-thumb" id="volume" style="top: 46px;">
+                    </div>
+                </div>
+                <div class="slider-label">
+                    Volume
+                </div>
+            </div>
+            <div class="span1 slider-container">
+                <div class="slider-groove">
+                    <div class="slider-track">
+                    </div>
+                    <div class="slider-thumb" id="effect" style="top: 46px;">
+                    </div>
+                </div>
+                <div class="slider-label">
+                    Effect
+                </div>
+            </div>
+        </div>
+        <div class="row-fluid">
+            <div class="span3"> 
+                <label>Artist: </label><span id="sampleArtist"></span>
+            </div>
+            <div class="span3">
+                <label>Song: </label><span id="sampleName"></span>&nbsp;<a id="purchaseSong" href="#" target="_blank" title="Purchase Song"><i class="icon icon-white icon-music"></i></a> 
+            </div> 
+            <div class="span3">
+                <label>Tempo: </label><span id="sampleBpm"></span>
+            </div>
+            <div class="span3">
+                <label>Length: </label><span id="sampleBeats"></span></div>
+            <div class="span3">
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,168 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+<div class="row-fluid" style="margin-bottom:15px;">
+    <div id="audioViewer">
+        <canvas id="sampleTrim"></canvas>
+        <canvas id="sampleWaveform"></canvas>
+        <canvas id="samplePlayIndex"></canvas>
+    </div>
+    <div id="audioViewerControls">
+        <button class="btn btn-mini btn-primary" id="samplePlay" title="Play/Stop">
+            <i class="icon-play icon-white"></i>
+        </button>
+        <button class="btn btn-mini btn-primary" id="sampleZoomIn" title="Zoom In">
+            <i class="icon-zoom-in icon-white"></i>
+        </button>
+        <button class="btn btn-mini btn-primary" id="sampleZoomOut" title="Zoom Out">
+            <i class="icon-zoom-out icon-white"></i>
+        </button>
+        <div id="waveformSample" data-waveform="true">Drag to player when finished.</div>
+    </div>
+</div>
+<div class="player row-fluid">
+</div>
+<div class="row-fluid">
+    <div class="span5" id="player-controls">
+        <button class="btn btn-primary" id="playerPlay">
+            Play <i class="icon-play icon-white"></i>
+        </button>
+        <button class="btn btn-primary" id="playerStop">
+            Stop <i class="icon-stop icon-white"></i>
+        </button>
+        <button class="btn btn-primary" href="#saveModal" data-signed-in="false" id="playerSave">
+            Save <i class="icon-file icon-white"></i>
+        </button>
+        <button class="btn btn-primary pull-right" id="playerReset">
+            Clear <i class="icon-trash icon-white"></i>
+        </button>
+    </div>
+    <div class="span5">
+        <h2>Samples
+        </h2>
+    </div>
+    <div class="span6">
+        <h4 style="line-height: 36px;" class="pull-right">Tempo</h4>
+    </div>
+</div>
+<div class="row-fluid">
+    <div class="span5">
+    </div>
+    <div class="span11" id="samplesContainer">
+        <ul id="samples" class="unstyled sampleList">
+
+            <li data-sample-options="{&quot;bpm&quot;:107, &quot;fileName&quot;:&quot;10225835df5abd.ogg&quot;, &quot;artist&quot;: &quot;Jay-Z&quot;, &quot;sampleName&quot;: &quot;Encore&quot;, &quot;duration&quot;:7.57625, &quot;id&quot;:198 }" class="ui-draggable">
+                <button data-id="198" class="playAudio audioSample btn-mini btn-primary btn"><i class="icon icon-play icon-white"></i></button>
+                Jay-Z - Encore<span class="pull-right">107</span></li>
+
+
+            <li data-sample-options="{&quot;bpm&quot;:107, &quot;fileName&quot;:&quot;10225836601a82.ogg&quot;, &quot;artist&quot;: &quot;Jay-Z&quot;, &quot;sampleName&quot;: &quot;Encore&quot;, &quot;duration&quot;:7.40833333333333, &quot;id&quot;:199 }" class="ui-draggable">
+                <button data-id="199" class="playAudio audioSample btn-mini btn-primary btn"><i class="icon icon-play icon-white"></i></button>
+                Jay-Z - Encore<span class="pull-right">107</span></li>
+
+
+            <li data-sample-options="{&quot;bpm&quot;:107, &quot;fileName&quot;:&quot;102258373947c5.ogg&quot;, &quot;artist&quot;: &quot;Jay-Z&quot;, &quot;sampleName&quot;: &quot;Encore&quot;, &quot;duration&quot;:35.5973333333333, &quot;id&quot;:200 }" class="ui-draggable">
+                <button data-id="200" class="playAudio audioSample btn-mini btn-primary btn"><i class="icon icon-play icon-white"></i></button>
+                Jay-Z - Encore<span class="pull-right">107</span></li>
+
+
+            <li data-sample-options="{&quot;bpm&quot;:107, &quot;fileName&quot;:&quot;1021f41ac41d25.ogg&quot;, &quot;artist&quot;: &quot;Common&quot;, &quot;sampleName&quot;: &quot;I Am Music&quot;, &quot;duration&quot;:2.2374375, &quot;id&quot;:87 }" class="ui-draggable">
+                <button data-id="87" class="playAudio audioSample btn-mini btn-primary btn"><i class="icon icon-play icon-white"></i></button>
+                Common - I Am Music<span class="pull-right">107</span></li>
+
+
+            <li data-sample-options="{&quot;bpm&quot;:107, &quot;fileName&quot;:&quot;1021f41a7c1aa8.ogg&quot;, &quot;artist&quot;: &quot;Common&quot;, &quot;sampleName&quot;: &quot;I Am Music&quot;, &quot;duration&quot;:2.23322916666667, &quot;id&quot;:86 }" class="ui-draggable">
+                <button data-id="86" class="playAudio audioSample btn-mini btn-primary btn"><i class="icon icon-play icon-white"></i></button>
+                Common - I Am Music<span class="pull-right">107</span></li>
+
+
+
+            <li data-sample-options="{&quot;bpm&quot;:110, &quot;fileName&quot;:&quot;1021f415e73f08.ogg&quot;, &quot;artist&quot;: &quot;Jay-Z&quot;, &quot;sampleName&quot;: &quot;Thats My Bitch&quot;, &quot;duration&quot;:2.1794375, &quot;id&quot;:84 }" class="ui-draggable">
+                <button data-id="84" class="playAudio audioSample btn-mini btn-primary btn"><i class="icon icon-play icon-white"></i></button>
+                Jay-Z - That's My Bitch<span class="pull-right">110</span></li>
+
+
+
+            <li data-sample-options="{&quot;bpm&quot;:110, &quot;fileName&quot;:&quot;1021f4164a30e8.ogg&quot;, &quot;artist&quot;: &quot;Jay-Z&quot;, &quot;sampleName&quot;: &quot;Thats My Bitch&quot;, &quot;duration&quot;:2.2268125, &quot;id&quot;:85 }" class="ui-draggable">
+                <button data-id="85" class="playAudio audioSample btn-mini btn-primary btn"><i class="icon icon-play icon-white"></i></button>
+                Jay-Z - That's My Bitch<span class="pull-right">110</span></li>
+
+
+            <li data-sample-options="{&quot;bpm&quot;:111, &quot;fileName&quot;:&quot;1021f255873764.ogg&quot;, &quot;artist&quot;: &quot;Big Boi&quot;, &quot;sampleName&quot;: &quot;Back Up Plan&quot;, &quot;duration&quot;:8.62464583333333, &quot;id&quot;:54 }" class="ui-draggable">
+                <button data-id="54" class="playAudio audioSample btn-mini btn-primary btn"><i class="icon icon-play icon-white"></i></button>
+                Big Boi - Back Up Plan<span class="pull-right">111</span></li>
+
+
+            <li data-sample-options="{&quot;bpm&quot;:112, &quot;fileName&quot;:&quot;1021f256c895dd.ogg&quot;, &quot;artist&quot;: &quot;Big Boi&quot;, &quot;sampleName&quot;: &quot;Back Up Plan&quot;, &quot;duration&quot;:8.60722916666667, &quot;id&quot;:55 }" class="ui-draggable">
+                <button data-id="55" class="playAudio audioSample btn-mini btn-primary btn"><i class="icon icon-play icon-white"></i></button>
+                Big Boi - Back Up Plan<span class="pull-right">112</span></li>
+
+
+            <li data-sample-options="{&quot;bpm&quot;:116, &quot;fileName&quot;:&quot;10225633e76ec1.ogg&quot;, &quot;artist&quot;: &quot;Cameo&quot;, &quot;sampleName&quot;: &quot;Word Up&quot;, &quot;duration&quot;:4.15258333333333, &quot;id&quot;:178 }" class="ui-draggable">
+                <button data-id="178" class="playAudio audioSample btn-mini btn-primary btn"><i class="icon icon-play icon-white"></i></button>
+                Cameo - Word Up<span class="pull-right">116</span></li>
+
+
+            <li data-sample-options="{&quot;bpm&quot;:116, &quot;fileName&quot;:&quot;102256310ff8a7.ogg&quot;, &quot;artist&quot;: &quot;Cameo&quot;, &quot;sampleName&quot;: &quot;Word Up&quot;, &quot;duration&quot;:0.530125, &quot;id&quot;:176 }" class="ui-draggable">
+                <button data-id="176" class="playAudio audioSample btn-mini btn-primary btn"><i class="icon icon-play icon-white"></i></button>
+                Cameo - Word Up<span class="pull-right">116</span></li>
+
+
+            <li data-sample-options="{&quot;bpm&quot;:116, &quot;fileName&quot;:&quot;1021ea01085688.ogg&quot;, &quot;artist&quot;: &quot;Fun&quot;, &quot;sampleName&quot;: &quot;We Are Young&quot;, &quot;duration&quot;:2.0715625, &quot;id&quot;:44 }" class="ui-draggable">
+                <button data-id="44" class="playAudio audioSample btn-mini btn-primary btn"><i class="icon icon-play icon-white"></i></button>
+                Fun - We Are Young<span class="pull-right">116</span></li>
+
+
+            <li data-sample-options="{&quot;bpm&quot;:117, &quot;fileName&quot;:&quot;1021ea88ad50fa.ogg&quot;, &quot;artist&quot;: &quot;Nirvana&quot;, &quot;sampleName&quot;: &quot;Smells Like Teen Spirit&quot;, &quot;duration&quot;:32.0687291666667, &quot;id&quot;:50 }" class="ui-draggable">
+                <button data-id="50" class="playAudio audioSample btn-mini btn-primary btn"><i class="icon icon-play icon-white"></i></button>
+                Nirvana - Smells Like Teen Spirit<span class="pull-right">117</span></li>
+
+
+            <li data-sample-options="{&quot;bpm&quot;:117, &quot;fileName&quot;:&quot;1021ea8d431618.ogg&quot;, &quot;artist&quot;: &quot;Nirvana&quot;, &quot;sampleName&quot;: &quot;Smells Like Teen Spirit&quot;, &quot;duration&quot;:25.8782916666667, &quot;id&quot;:51 }" class="ui-draggable">
+                <button data-id="51" class="playAudio audioSample btn-mini btn-primary btn"><i class="icon icon-play icon-white"></i></button>
+                Nirvana - Smells Like Teen Spirit<span class="pull-right">117</span></li>
+
+
+
+            <li data-sample-options="{&quot;bpm&quot;:118, &quot;fileName&quot;:&quot;102257534ac337.ogg&quot;, &quot;artist&quot;: &quot;Breakbot&quot;, &quot;sampleName&quot;: &quot;Baby Im Yours&quot;, &quot;duration&quot;:31.7375208333333, &quot;id&quot;:197 }" class="ui-draggable">
+                <button data-id="197" class="playAudio audioSample btn-mini btn-primary btn"><i class="icon icon-play icon-white"></i></button>
+                Breakbot - Baby I'm Yours<span class="pull-right">118</span></li>
+
+
+            <li data-sample-options="{&quot;bpm&quot;:120, &quot;fileName&quot;:&quot;1021f56e6d44ef.ogg&quot;, &quot;artist&quot;: &quot;Adele&quot;, &quot;sampleName&quot;: &quot;Rumour Has It&quot;, &quot;duration&quot;:8.00845833333333, &quot;id&quot;:99 }" class="ui-draggable">
+                <button data-id="99" class="playAudio audioSample btn-mini btn-primary btn"><i class="icon icon-play icon-white"></i></button>
+                Adele - Rumour Has It<span class="pull-right">120</span></li>
+
+
+            <li data-sample-options="{&quot;bpm&quot;:120, &quot;fileName&quot;:&quot;1021f56f3de46b.ogg&quot;, &quot;artist&quot;: &quot;Adele&quot;, &quot;sampleName&quot;: &quot;Rumour Has It&quot;, &quot;duration&quot;:25.4651666666667, &quot;id&quot;:100 }" class="ui-draggable">
+                <button data-id="100" class="playAudio audioSample btn-mini btn-primary btn"><i class="icon icon-play icon-white"></i></button>
+                Adele - Rumour Has It<span class="pull-right">120</span></li>
+
+
+            <li data-sample-options="{&quot;bpm&quot;:120, &quot;fileName&quot;:&quot;1021f5705bfb10.ogg&quot;, &quot;artist&quot;: &quot;Adele&quot;, &quot;sampleName&quot;: &quot;Rumour Has It&quot;, &quot;duration&quot;:15.1044583333333, &quot;id&quot;:101 }" class="ui-draggable">
+                <button data-id="101" class="playAudio audioSample btn-mini btn-primary btn"><i class="icon icon-play icon-white"></i></button>
+                Adele - Rumour Has It<span class="pull-right">120</span></li>
+
+
+            <li data-sample-options="{&quot;bpm&quot;:120, &quot;fileName&quot;:&quot;1021f570c88e38.ogg&quot;, &quot;artist&quot;: &quot;Adele&quot;, &quot;sampleName&quot;: &quot;Rumour Has It&quot;, &quot;duration&quot;:17.6605833333333, &quot;id&quot;:102 }" class="ui-draggable">
+                <button data-id="102" class="playAudio audioSample btn-mini btn-primary btn"><i class="icon icon-play icon-white"></i></button>
+                Adele - Rumour Has It<span class="pull-right">120</span></li>
+
+
+            <li data-sample-options="{&quot;bpm&quot;:120, &quot;fileName&quot;:&quot;1021f57253a028.ogg&quot;, &quot;artist&quot;: &quot;Adele&quot;, &quot;sampleName&quot;: &quot;Rumour Has It&quot;, &quot;duration&quot;:39.2753541666667, &quot;id&quot;:103 }" class="ui-draggable">
+                <button data-id="103" class="playAudio audioSample btn-mini btn-primary btn"><i class="icon icon-play icon-white"></i></button>
+                Adele - Rumour Has It<span class="pull-right">120</span></li>
+        </ul>
+        <div id="resizeHandle">
+        </div>
+        <ul class="pager">
+            <li class="previous" style=""><a href="#">← Previous</a> </li>
+            <li class="next" style=""><a href="#">Next →</a> </li>
+        </ul>
+        <audio id="samplePlayer" style="display: none"></audio>
+        <input type="hidden" id="pageIndex" value="0">
+        <input type="hidden" id="pageSize" value="20">
+        <input type="hidden" id="samplesAdded" value="0">
+    </div>
+</div>
+@Html.Partial("_ProcessingJS")

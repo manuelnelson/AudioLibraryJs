@@ -1,0 +1,7 @@
+﻿<script id="mashup-songlist-template" type="text/x-jquery-tmpl">
+    <% var noApostropheTitle = Title; if (Title.indexOf("'") > -1 ){ %>
+    <% noApostropheTitle = Title.replace(/'/g,""); } %>
+    <li data-sample-options='{"bpm":{{Bpm}}, "fileName":"{{FileName}}", "artist": "{{Name}}", "sampleName": "{{noApostropheTitle}}", "duration":{{Duration}}, "id":{{Id}} }'>
+        <button data-id="{{Id}}" class="playAudio audioSample btn-mini btn-primary btn"><i class="icon icon-play icon-white" ></i></button>{{Name}} - {{Title}}<span class="pull-right">{{Bpm}}</span></li>
+</script>
+ 

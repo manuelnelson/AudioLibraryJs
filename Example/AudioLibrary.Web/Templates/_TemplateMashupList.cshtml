@@ -1,0 +1,9 @@
+﻿<script id="mashup-mashup-template" type="text/x-jquery-tmpl">
+    <li>
+        <h4>
+            <button data-src="http://mashandmix.blob.core.windows.net/mashups/{{Id}}.ogg" class="playAudio audioMix btn-small btn-primary btn"><i class="icon icon-play icon-white"></i></button>
+            <a href="/Player?PlayMix={{Id}}" title="View Mix">{{Name}}</a><span class="pull-right" style="font-weight: normal;"><a id="downloadMashup" href='http://mashandmix.blob.core.windows.net/mashups/{{Id}}.ogg' title="Click to download"><i class="icon icon-download"></i></a></span></h4>
+        <span>Created: {{DateCreated}}</span><i class="icon icon-arrow-up pull-right mashup-vote" data-id="{{Id}}" title="Like this mix"></i><span class="pull-right vote-count">{{VoteCount}}</span>
+    </li>
+</script>
+
