@@ -13,10 +13,18 @@ This project contains several jquery plugin's - using the [jquery ui widget desi
 To attach the player to an element, simply add audioPlayerGraphical({:options}) to the jquery object. Example
 ####HTML
     <div id="player"></div>
-    <div id="playerStop"></div>
-    <div id="playerSave"></div>
-    <div id="playerPlay"></div>
-    <div id="playerReset"></div>
+    <button class="btn btn-primary" id="playerPlay">
+        Play <i class="icon-play icon-white"></i>
+    </button>
+    <button class="btn btn-primary" id="playerStop">
+        Stop <i class="icon-stop icon-white"></i>
+    </button>
+    <button class="btn btn-primary" href="#saveModal" data-signed-in="false" id="playerSave">
+        Save <i class="icon-file icon-white"></i>
+    </button>
+    <button class="btn btn-primary pull-right" id="playerReset">
+        Clear <i class="icon-trash icon-white"></i>
+    </button>
 ####Javascript
     $('#player').audioPlayerGraphical({
         bpm: 100,
