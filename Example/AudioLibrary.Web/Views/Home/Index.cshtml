@@ -1,13 +1,14 @@
 ﻿@{
     ViewBag.Title = "Home Page";
 }
-<div class="row-fluid" style="margin-bottom:15px;">
-    <div id="audioViewer">
-        <canvas id="sampleTrim"></canvas>
-        <canvas id="sampleWaveform"></canvas>
-        <canvas id="samplePlayIndex"></canvas>
-    </div>
-    <div id="audioViewerControls">
+<div id="audioViewer" class="row-fluid">
+    <span class="dropInfo">Drop .mp3 or .ogg file here!</span>
+    <canvas id="sampleTrim"></canvas>
+    <canvas id="sampleWaveform"></canvas>
+    <canvas id="samplePlayIndex"></canvas>
+</div>
+<div class="row-fluid">
+    <div id="audioViewerControls" class="span2">
         <button class="btn btn-mini btn-primary" id="samplePlay" title="Play/Stop">
             <i class="icon-play icon-white"></i>
         </button>
@@ -17,8 +18,8 @@
         <button class="btn btn-mini btn-primary" id="sampleZoomOut" title="Zoom Out">
             <i class="icon-zoom-out icon-white"></i>
         </button>
-        <div id="waveformSample" data-waveform="true">Drag to player when finished.</div>
     </div>
+    <div id="waveformSample" class="span4" data-waveform="true">Drag to player when finished.</div>
 </div>
 <div class="player row-fluid">
 </div>

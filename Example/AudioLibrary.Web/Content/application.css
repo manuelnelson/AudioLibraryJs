@@ -6898,9 +6898,11 @@ a.close {
   bottom: 2px;
 }
 /*----waveform-----*/
-#waveformSample {
-  margin-top: 10px;
-  width: 100%;
+.dropInfo {
+  font-size: 24px;
+  position: relative;
+  top: 112px;
+  z-index: 100;
 }
 .ui-draggable:hover {
   cursor: pointer;
@@ -6910,6 +6912,8 @@ a.close {
   overflow: hidden;
   width: 100%;
   height: 206px;
+  text-align: center;
+  position: relative;
 }
 #sampleTrim {
   height: 200px;
