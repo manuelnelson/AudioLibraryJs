@@ -2,7 +2,6 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using AudioLibrary.Web.App_Start;
-using ServiceStack.MiniProfiler;
 
 namespace AudioLibrary.Web
 {
@@ -15,17 +14,6 @@ namespace AudioLibrary.Web
         {
             AreaRegistration.RegisterAllAreas();
             RouteConfig.RegisterRoutes(RouteTable.Routes);
-        }
-
-        protected void Application_BeginRequest()
-        {
-            if (Request.IsLocal)
-                Profiler.Start();
-        }
-
-        protected void Application_EndRequest()
-        {
-            Profiler.Stop();
         }
     }
 }

@@ -1,3 +1,11 @@
+﻿// Core variables and mixins
+//--------Required bootstrap files
+@import "variables.less"; // Modify this for custom colors, font-sizes, etc
+@import "mixins.less";   
+
+@import "grid.less";
+@import "layouts.less";  
+
 // Responsive.less
 // For phone and tablet devices
 // -------------------------------------------------------------
@@ -10,15 +18,6 @@
 @-ms-viewport{ 
   width: device-width;
 }
-
-
-// REPEAT VARIABLES & MIXINS
-// -------------------------
-// Required since we compile the responsive stuff separately
-
-@import "variables.less"; // Modify this for custom colors, font-sizes, etc
-@import "mixins.less";
-
 
 // RESPONSIVE CLASSES
 // ------------------
