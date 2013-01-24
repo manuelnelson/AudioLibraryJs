@@ -318,6 +318,8 @@
     <Content Include="Scripts\less.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <None Include="Scripts\other.js.bundle" />
+    <Content Include="Scripts\other.js" />
+    <Content Include="Scripts\other.min.js" />
     <Content Include="Scripts\processing-1.4.1.js" />
     <Content Include="Scripts\underscore.js" />
     <Content Include="Web.config" />
