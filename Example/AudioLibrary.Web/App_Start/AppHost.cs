@@ -62,8 +62,8 @@ namespace AudioLibrary.Web.App_Start
 
             //Uncomment to use Entity Framework
             //RegisterEfServicesAndRepositories(container);
-            RegisterOrmLiteServicesAndRepositories(container);
-            RegisterCacheAndStorage(container);
+            //RegisterOrmLiteServicesAndRepositories(container);
+            //RegisterCacheAndStorage(container);
 
             //Enable Authentication
             //ConfigureAuth(container);
