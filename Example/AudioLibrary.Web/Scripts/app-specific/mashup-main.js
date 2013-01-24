@@ -13,7 +13,7 @@
                 stopButton: '#playerStop',
                 saveButton: '#playerSave',
                 playButton: '#playerPlay',
-                clearButton: '#playerReset'
+                clearButton: '#playerReset' 
             });
         } catch(ex) {
             Mashup.ShowMessage("Uh oh!", ex, Mashup.properties.messageType.Error);
