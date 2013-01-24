@@ -298,7 +298,6 @@
     <Content Include="Scripts\app-specific\mashup.global.js" />
     <Content Include="Scripts\app-specific\mashup.global.publish.js" />
     <Content Include="Scripts\app-specific\mashup.resizable.js" />
-    <Content Include="Scripts\app-specific\mashup.specific.js" />
     <Content Include="Scripts\application.js" />
     <Content Include="Scripts\application.min.js" />
     <Content Include="Scripts\bootstrap-alert.js" />
