@@ -231,7 +231,6 @@
     <Content Include="Content\application.min.css" />
     <Content Include="Content\images\glyphicons-halflings-white.png" />
     <Content Include="Content\images\glyphicons-halflings.png" />
-    <Content Include="Content\js\ss-validation.js" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="bundler\vs2010-extension\BundlerRunOnSave.vsix" />
@@ -294,12 +293,10 @@
     <Content Include="Scripts\app-specific\mashup.audioSampleGraphical.js" />
     <Content Include="Scripts\app-specific\mashup.audioViewer.js" />
     <Content Include="Scripts\app-specific\mashup.effects.js" />
-    <Content Include="Scripts\app-specific\mashup.global.development.js" />
     <Content Include="Scripts\app-specific\mashup.global.js" />
-    <Content Include="Scripts\app-specific\mashup.global.publish.js" />
     <Content Include="Scripts\app-specific\mashup.resizable.js" />
-    <Content Include="Scripts\application.js" />
-    <Content Include="Scripts\application.min.js" />
+    <Content Include="Scripts\audiolibrary.js" />
+    <Content Include="Scripts\audiolibrary.min.js" />
     <Content Include="Scripts\bootstrap-alert.js" />
     <Content Include="Scripts\bootstrap-button.js" />
     <Content Include="Scripts\bootstrap-collapse.js" />
@@ -309,8 +306,9 @@
     <Content Include="Scripts\bootstrap-tooltip.js" />
     <Content Include="Scripts\bootstrap-transition.js" />
     <Content Include="Content\application.css.bundle" />
-    <Content Include="Scripts\application.js.bundle" />
-    <Content Include="Content\less\app-specific.less" />
+    <Content Include="Scripts\audiolibrary.js.bundle" />
+    <Content Include="Content\less\audio-library.less" />
+    <Content Include="Content\less\necessary-bootstrap.less" />
     <None Include="Scripts\jquery-1.9.0.intellisense.js" />
     <Content Include="Scripts\jquery-1.9.0.js" />
     <Content Include="Scripts\jquery-1.9.0.min.js" />
@@ -319,6 +317,7 @@
     <Content Include="Scripts\jstorage.min.js" />
     <Content Include="Scripts\less.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
+    <None Include="Scripts\other.js.bundle" />
     <Content Include="Scripts\processing-1.4.1.js" />
     <Content Include="Scripts\underscore.js" />
     <Content Include="Web.config" />
