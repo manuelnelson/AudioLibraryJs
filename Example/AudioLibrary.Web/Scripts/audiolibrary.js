@@ -1050,8 +1050,20 @@ https://github.com/addyosmani/jquery-plugin-patterns/blob/master/jquery.widget-f
             var self = this;
             if (!this.options.fileName) {
                 //No filename. This sample is coming from an audioViewer. The buffer will be added manually. 
-                url = $(this.options.waveFormElement).audioViewer('getFinalSampleBuffer');
-                //this.buffer = Mashup.Player.audioPlayerGraphical('getContext').createBuffer($(this.options.waveFormElement).audioViewer('getFinalSampleBuffer'), this.options.mono);
+                //url = $(this.options.waveFormElement).audioViewer('getFinalSampleBuffer');
+                var buffer = $(this.options.waveFormElement).audioViewer('getFinalSampleBuffer');
+                var bb = new Blob([btoa(buffer)], { type: 'audio/wav' });
+                var fileReader = new FileReader();
+                fileReader.onload = function () {
+                    var arrayBuffer = this.result;
+                    try {
+                        self.buffer = Mashup.Player.audioPlayerGraphical('getContext').createBuffer(arrayBuffer, self.options.mono);
+                    } catch(ex) {
+                        Mashup.ShowMessage("Schnikes!", ex);
+                    }
+                    
+                };
+                fileReader.readAsArrayBuffer(bb);                
                 return;
             } else {
                 url = Mashup.properties.sampleFilePath + this.options.fileName;
@@ -1681,8 +1693,8 @@ https://github.com/addyosmani/jquery-plugin-patterns/blob/master/jquery.widget-f
             if (files.length > 0) {
                 if (window.FormData !== undefined) {
                     var file = files[0];
-                    if (file.type !== "audio/mp3" && file.type !== "audio/ogg") {
-                        Mashup.ShowMessage("Invalid File Type", "File must be an .mp3 or .ogg file", Mashup.properties.messageType.Error);
+                    if (file.type !== "audio/mp3" && file.type !== "audio/ogg" && file.type !== "audio/wav") {
+                        Mashup.ShowMessage("Invalid File Type", "File must be an .mp3, .ogg, or .wav file", Mashup.properties.messageType.Error);
                         Mashup.EndLoading();
                         return;
                     }
@@ -1767,13 +1779,10 @@ https://github.com/addyosmani/jquery-plugin-patterns/blob/master/jquery.widget-f
                 sampleRate: 44100,
                 channelCount: 2,
                 bytesPerSample: 2
-            });
-            var audio = document.createElement('audio');
-            var bb = new Blob([buffer], {type: 'audio/wav:base64'});
-            var url = window.URL.createObjectURL(bb);
-            audio.src = url;
-            audio.play();
-            return url;
+            });            
+            //var bb = new Blob([buffer], {type: 'audio/wav;base64'});
+            return buffer;
+            //var newbuffer = btoa(buffer);
             //var blob = new Blob([equalizedArray], { type: 'text/plain' });
             //return blob;
         },
