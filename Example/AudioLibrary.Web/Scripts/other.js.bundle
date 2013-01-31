@@ -3,8 +3,12 @@ bootstrap-transition.js
 bootstrap-alert.js  
 bootstrap-button.js
 bootstrap-collapse.js
+bootstrap-modal.js
 bootstrap-dropdown.js
 bootstrap-tooltip.js 
 jquery-ui-1.10.0.custom.js
 underscore.js
 processing-1.4.1.js
+parsely.js
+pcmdata.js
+app-specific/mashup-main.js

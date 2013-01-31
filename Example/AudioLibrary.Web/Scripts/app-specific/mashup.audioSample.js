@@ -52,21 +52,44 @@
         _loadSample: function () {
             //first, check if samples has been loaded before
             var loadedSample = this.isGraphical ? Mashup.Player.audioPlayerGraphical('getLoadedSampleById', this.options.id) : Mashup.Player.audioPlayer('getLoadedSampleById', this.options.id); 
-            if(typeof loadedSample.buffer != 'undefined') {
+            if (typeof loadedSample.buffer != 'undefined') {
+                //samples been loaded before.  Just assign and return;
                 this.buffer = loadedSample.buffer;
                 return;
             }
-            if(typeof loadedSample.id != 'undefined') {
+            if (typeof loadedSample.id != 'undefined') {
+                //samples is loading but not complete - This can happen if we are loading an entire mix. 
+                //Let's not load again. We'll assign this sample later (updateLoadedSample)
                 return;
             }
-            loadedSample = {
+            //If we got here, this is a completely new sample.
+            var newSample = {
                 id: this.options.id
             };
-            this.isGraphical ? Mashup.Player.audioPlayerGraphical('addLoadedSample', loadedSample) : Mashup.Player.audioPlayer('addLoadedSample', loadedSample);
-                        
+            this.isGraphical ? Mashup.Player.audioPlayerGraphical('addLoadedSample', newSample) : Mashup.Player.audioPlayer('addLoadedSample', newSample);
+            var url;
             var self = this;
+            if (!this.options.fileName) {
+                //No filename. This sample is coming from an audioViewer. The buffer will be added manually. 
+                //url = $(this.options.waveFormElement).audioViewer('getFinalSampleBuffer');
+                var buffer = $(this.options.waveFormElement).audioViewer('getFinalSampleBuffer');
+                var bb = new Blob([btoa(buffer)], { type: 'audio/wav' });
+                var fileReader = new FileReader();
+                fileReader.onload = function () {
+                    var arrayBuffer = this.result;
+                    try {
+                        self.buffer = Mashup.Player.audioPlayerGraphical('getContext').createBuffer(arrayBuffer, self.options.mono);
+                    } catch(ex) {
+                        Mashup.ShowMessage("Schnikes!", ex);
+                    }
+                    
+                };
+                fileReader.readAsArrayBuffer(bb);                
+                return;
+            } else {
+                url = Mashup.properties.sampleFilePath + this.options.fileName;
+            }
             // Load asynchronously
-            var url = Mashup.properties.sampleFilePath + this.options.fileName;
             var request = new XMLHttpRequest();
             request.open("GET", url, true);
             request.responseType = "arraybuffer";
@@ -74,11 +97,11 @@
                 self.buffer = self.isGraphical ? Mashup.Player.audioPlayerGraphical('getContext').createBuffer(request.response, self.options.mono) : Mashup.Player.audioPlayer('getContext').createBuffer(request.response, self.options.mono);
 
                 self.buffer.gain = self.options.volume;
-                loadedSample = {
+                newSample = {
                     id: self.options.id,
                     buffer: self.buffer
                 };
-                self.isGraphical ? Mashup.Player.audioPlayerGraphical('updateLoadedSample', loadedSample) : Mashup.Player.audioPlayer('updateLoadedSample', loadedSample); 
+                self.isGraphical ? Mashup.Player.audioPlayerGraphical('updateLoadedSample', newSample) : Mashup.Player.audioPlayer('updateLoadedSample', newSample);
             };
             request.send();
         },

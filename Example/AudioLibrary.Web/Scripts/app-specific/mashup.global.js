@@ -26,25 +26,26 @@ Mashup.properties = {
         hoverClass: 'hover',
         drop: function (event, ui) { 
             //If we are dragging from sample a sample, we need to get new start and end times.
-            var sampleOptions = {};
-            if ($(ui.draggable.context).attr('data-waveform')) {
-                //configure sampleOptions here
-                $('#sampleWaveform').audioViewer('setPlayTimes');
-                sampleOptions.trimStart = $('#audioViewerControls').audioPlayerWaveformViewer('option', 'waveformStart');
-                sampleOptions.playDuration = $('#audioViewerControls').audioPlayerWaveformViewer('option', 'waveformEnd') - sampleOptions.trimStart;
-                Mashup.MoveSampleToPlayer(sampleOptions, $self);
-            }
-            var options = $(ui.draggable.context).attr('data-sample-options');
-            sampleOptions = JSON.parse(options);
             var $self = $(this);
+            var options = $(ui.draggable.context).attr('data-sample-options');
+            var sampleOptions = JSON.parse(options);
             sampleOptions.track = Mashup.GetTrack($self);
             sampleOptions.rhythmIndex = Mashup.GetStartBeat($self);
+            if ($(ui.draggable.context).attr('data-waveform')) {
+                //configure sampleOptions here                
+                sampleOptions.playDuration = $('#sampleWaveform').audioViewer('getEndTime') - $('#sampleWaveform').audioViewer('getStartTime');
+                sampleOptions.trimStart = 0;                
+                sampleOptions.id = new Date().getTime();
+                sampleOptions.waveFormElement = '#sampleWaveform';
+                Mashup.MoveSampleToPlayer(sampleOptions, $self);
+                return;
+            }
             if(typeof sampleOptions.playDuration === 'undefined')
                 sampleOptions.playDuration = sampleOptions.duration;
             Mashup.MoveSampleToPlayer(sampleOptions, $self);
         }
     },
-    maxSampleLength: 41000 * 4 * 90,//41kHz * 32bits * number of seconds allowed
+    maxSampleLength: 44100 * 4 * 90,//44.1kHz * 32bits * number of seconds allowed
     mouseCaptureOffset: 0,
     mouseCapture: null,
     currentSlider: null,
@@ -100,17 +101,14 @@ Mashup.GenericErrorMessage = function (jqXHR, textStatus, errorThrown) {
 //Use with graphical player
 Mashup.MoveSampleToPlayer = function (sampleOptions, $playerDiv) {
     $playerDiv.droppable("destroy");
-
-    var sample = $playerDiv.audioSampleGraphical(sampleOptions);
-
-    //If sample did not initiate due to error, show error and skip adding the sample to player
-    if (!sample.audioSampleGraphical('getInitiated')) {
-        sample.audioSampleGraphical('destroy');
-        Mashup.ShowMessage("Schnikes!", "The sample overlaps another sample on the same track.  Please find a shorter sample or place the sample on a different track.");
-    }
-    else {
+    try {
+        var sample = $playerDiv.audioSampleGraphical(sampleOptions);
         Mashup.Player.audioPlayerGraphical('addSample', sample);
-    }
+    } catch(ex) {
+        if (sample)
+            sample.audioSampleGraphical('destroy');
+        Mashup.ShowMessage("Schnikes!", ex);
+    }        
 };
 
 Mashup.GetTrack = function ($playerDiv) {

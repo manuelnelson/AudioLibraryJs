@@ -2,13 +2,13 @@
     ViewBag.Title = "Home Page";
 }
 <div id="audioViewer" class="row-fluid">
-    <span class="dropInfo">Drop .mp3 or .ogg file here!</span>
     <canvas id="sampleTrim"></canvas>
     <canvas id="sampleWaveform"></canvas>
     <canvas id="samplePlayIndex"></canvas>
+    <span id="dropInfo">Drop .mp3 or .ogg file here!</span>
 </div>
-<div class="row-fluid">
-    <div id="audioViewerControls" class="span2">
+<div class="row-fluid hide" id="audioViewerControls">
+    <div class="span3">
         <button class="btn btn-mini btn-primary" id="samplePlay" title="Play/Stop">
             <i class="icon-play icon-white"></i>
         </button>
@@ -18,8 +18,11 @@
         <button class="btn btn-mini btn-primary" id="sampleZoomOut" title="Zoom Out">
             <i class="icon-zoom-out icon-white"></i>
         </button>
+        <a href="#bpmModal" class="btn btn-mini btn-primary" data-toggle="modal"  id="sampleProperties" title="Properties">
+            Set Bpm
+        </a>
     </div>
-    <div id="waveformSample" class="span4" data-waveform="true">Drag to player when finished.</div>
+    <div id="waveformSample" class="badge badge-inverse" data-sample-options='{"bpm":100}' data-waveform="true">Drag to player when finished.</div>
 </div>
 <div class="player row-fluid">
 </div>
@@ -166,4 +169,23 @@
         <input type="hidden" id="samplesAdded" value="0">
     </div>
 </div>
+@*------Bpm Modal------*@
+<div class="modal hide fade" id="bpmModal">
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal">×</a>
+        <h3>Bpm</h3>
+    </div>
+    <div class="modal-body">
+        <form id="bpm-form" data-validate="parsley">
+            <label>Enter Bpm</label>
+            <input id="Bpm" name="Bpm" placeholder="Bpm" type="text" data-type="number" data-trigger="focusin focusout" value="">
+            <label>Or enter the number of beats currently selected in the editor and let us calculate it for you</label>
+            <input id="Beats" name="Beats" placeholder="Number of Beats" type="text" data-type="number" data-trigger="focusin focusout" value="">
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" data-dismiss="modal" id="bpmClose" class="btn btn-primary">Save and Close</a>
+    </div>
+</div>
 @Html.Partial("_ProcessingJS")
+

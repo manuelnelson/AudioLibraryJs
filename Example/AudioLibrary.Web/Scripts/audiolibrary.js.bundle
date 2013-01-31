@@ -1,5 +1,4 @@
-﻿app-specific/mashup-main.js
-app-specific/mashup.audioControl.js
+﻿app-specific/mashup.audioControl.js
 app-specific/mashup.audioPlayer.js
 app-specific/mashup.audioPlayerGraphical.js
 app-specific/mashup.audioSample.js 

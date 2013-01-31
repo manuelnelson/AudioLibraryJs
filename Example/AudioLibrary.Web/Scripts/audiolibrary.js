@@ -1,130 +1,3 @@
-;/// <reference path="mashup.global.js" />
-/// <reference path="mashup-dsp.js" />
-/// <reference path="../jquery-1.8.2.intellisense.js" />
-;$(document).ready(function () {
-    if ($('.player').length > 0) {
-        //Plugin code!!!
-        //Draggable
-        $('.sampleList li').draggable(Mashup.properties.draggableDefaultOptions);
-
-        try {
-            Mashup.Player = $('.player').audioPlayerGraphical({
-                bpm: 100,
-                stopButton: '#playerStop',
-                saveButton: '#playerSave',
-                playButton: '#playerPlay',
-                clearButton: '#playerReset' 
-            });
-        } catch(ex) {
-            Mashup.ShowMessage("Uh oh!", ex, Mashup.properties.messageType.Error);
-    }
-    //plug-in for viewer
-    $('#sampleWaveform').audioViewer({
-        playButton: '#samplePlay',
-        zoomInButton: '#sampleZoomIn',
-        zoomOutButton: '#sampleZoomOut',
-        dropFileBox: '#sampleTrim'
-    });
-
-    $('#waveformSample').draggable({
-        revert: 'invalid',
-        cursorAt: {
-            left: 85
-        },
-        helper: function (event) {
-            var clone = $(this).clone();
-            var ndx = $(clone).text().indexOf('(');
-            $(clone).text($(clone).text().substr(0, ndx));
-            var sampleClone = $("<li />")
-                .append(clone)
-                .addClass('sampleSelected');
-            return sampleClone;
-        }
-    });
-        //Non-plugin code
-
-        //When loading home page, we need to check if we are coming back from a save page. 
-        //If so, we need to load the player, then bring up the save dialog
-        if (Mashup.GetParameterByName('saveMix') === "true") {
-            var mix = $.jStorage.get('latestUserMix');
-            var distinctSampleIds = $.jStorage.get('latestSampleIds');
-            Mashup.Player.audioPlayerGraphical('loadMix', mix);
-            $('#MashupJson').val(mix);
-            $('#SampleIds').val(distinctSampleIds);
-            $('#saveModal').modal('show');
-        }
-
-        //function to save the mash
-        //$('#saveMash').click(function () {
-        //    if (!$('#addMashup').valid()) {
-        //        return false;
-        //    }
-        //    if (!validTags()) {
-        //        return false;
-        //    }
-        //    $('#saveMessage').show();
-        //    var name = $('#Name').val();
-        //    var mashupJson = $('#MashupJson').val();
-        //    var tags = [];
-        //    var distinctIds = $('#SampleIds').val().split(",");
-        //    $.each($('#selectedTags').children(), function (ndx, item) {
-        //        tags.push($(item).attr('data-id'));
-        //    });
-        //    var postData = {
-        //        Name: name,
-        //        MashupJson: mashupJson,
-        //        Tags: tags,
-        //        SampleIds: distinctIds
-        //    };
-        //    $.ajax({
-        //        type: 'POST',
-        //        data: postData,
-        //        url: '/api/mashups?format=json',
-        //        traditional: true,
-        //        success: function (data) {
-        //            $('#saveMessage').hide();
-        //            $('#Name').val('');
-        //            $('#selectedTags').empty();
-        //            $('#hiddenTags').empty();
-        //            $('#mashId').val(data.Mashup.Id);
-        //            $('#playerSave').text('Update');
-        //            $('#saveModal').modal('hide');
-        //            Mashup.ShowMessage("Success", "Your mash was successfully saved.", Mashup.properties.messageType.Success);
-        //        },
-        //        error: Mashup.GenericErrorMessage
-        //    });
-        //});
-
- 
-        //Set up audio control panel
-        $('.slider-thumb').audioControl();
-        $('#sampleSugar .icon-remove').click(function () {
-            $('#sampleSugar').slideUp(500); // Hide - slide up.
-            $('.player .sample').removeClass('edit');
-        });
-
-        //handle pager functionality
-        $('.previous').click(function () {
-            var pageNdx = $('#pageIndex');
-            var currNdx = pageNdx.val();
-            pageNdx.val(currNdx - 1);
-            Mashup.GetSamples();
-            return false;
-        });
-        $('.next').click(function () {
-            var pageNdx = $('#pageIndex');
-            var currNdx = parseInt(pageNdx.val());
-            pageNdx.val(currNdx + 1);
-            Mashup.GetSamples();
-            return false;
-        });
-        $('#resizeHandle').myResizable({
-            resizeElement: $('#samples')
-        });
-    }
-
-
-});
 ;/* File Created: March 30, 2012 */
 /*!
 * jQuery UI Widget-factory plugin boilerplate (for 1.8/9+)
@@ -1158,21 +1031,32 @@ https://github.com/addyosmani/jquery-plugin-patterns/blob/master/jquery.widget-f
         _loadSample: function () {
             //first, check if samples has been loaded before
             var loadedSample = this.isGraphical ? Mashup.Player.audioPlayerGraphical('getLoadedSampleById', this.options.id) : Mashup.Player.audioPlayer('getLoadedSampleById', this.options.id); 
-            if(typeof loadedSample.buffer != 'undefined') {
+            if (typeof loadedSample.buffer != 'undefined') {
+                //samples been loaded before.  Just assign and return;
                 this.buffer = loadedSample.buffer;
                 return;
             }
-            if(typeof loadedSample.id != 'undefined') {
+            if (typeof loadedSample.id != 'undefined') {
+                //samples is loading but not complete - This can happen if we are loading an entire mix. 
+                //Let's not load again. We'll assign this sample later (updateLoadedSample)
                 return;
             }
-            loadedSample = {
+            //If we got here, this is a completely new sample.
+            var newSample = {
                 id: this.options.id
             };
-            this.isGraphical ? Mashup.Player.audioPlayerGraphical('addLoadedSample', loadedSample) : Mashup.Player.audioPlayer('addLoadedSample', loadedSample);
-                        
+            this.isGraphical ? Mashup.Player.audioPlayerGraphical('addLoadedSample', newSample) : Mashup.Player.audioPlayer('addLoadedSample', newSample);
+            var url;
             var self = this;
+            if (!this.options.fileName) {
+                //No filename. This sample is coming from an audioViewer. The buffer will be added manually. 
+                url = $(this.options.waveFormElement).audioViewer('getFinalSampleBuffer');
+                //this.buffer = Mashup.Player.audioPlayerGraphical('getContext').createBuffer($(this.options.waveFormElement).audioViewer('getFinalSampleBuffer'), this.options.mono);
+                return;
+            } else {
+                url = Mashup.properties.sampleFilePath + this.options.fileName;
+            }
             // Load asynchronously
-            var url = Mashup.properties.sampleFilePath + this.options.fileName;
             var request = new XMLHttpRequest();
             request.open("GET", url, true);
             request.responseType = "arraybuffer";
@@ -1180,11 +1064,11 @@ https://github.com/addyosmani/jquery-plugin-patterns/blob/master/jquery.widget-f
                 self.buffer = self.isGraphical ? Mashup.Player.audioPlayerGraphical('getContext').createBuffer(request.response, self.options.mono) : Mashup.Player.audioPlayer('getContext').createBuffer(request.response, self.options.mono);
 
                 self.buffer.gain = self.options.volume;
-                loadedSample = {
+                newSample = {
                     id: self.options.id,
                     buffer: self.buffer
                 };
-                self.isGraphical ? Mashup.Player.audioPlayerGraphical('updateLoadedSample', loadedSample) : Mashup.Player.audioPlayer('updateLoadedSample', loadedSample); 
+                self.isGraphical ? Mashup.Player.audioPlayerGraphical('updateLoadedSample', newSample) : Mashup.Player.audioPlayer('updateLoadedSample', newSample);
             };
             request.send();
         },
@@ -1305,21 +1189,16 @@ https://github.com/addyosmani/jquery-plugin-patterns/blob/master/jquery.widget-f
             this.isGraphical = true;
             this._calculateStartBeat();
             this._calculateNumberOfBeats();
-            if (!this._animate()) {
-                return;
-            };
+            this._animate();
             $.Mashup.audioSample.prototype._create.call(this);
             this._handleEvents();            
             this._loadEffect();
-            
             this._initiated = true;
         },
 
         _animate: function () {
             //If we are unable to make room, we need to forget everything and return
-            if (!this._makeTrackRoom()) {
-                return false;
-            };
+            this._makeTrackRoom();
             
             //New HTML
             this.$sampleContainer = $("<div />").append("<span id='" + this.options.id + "'>" + this.options.sampleName + "</span><a class='icon-remove icon-white pull-right'></a>")
@@ -1331,7 +1210,6 @@ https://github.com/addyosmani/jquery-plugin-patterns/blob/master/jquery.widget-f
             this.element.append(this.$sampleContainer).fadeIn(function () {
                 that.animate({ width: '100%', height: '30px' });
             });
-            return true;
         },
         _loadEffect: function () {
             //Load effect
@@ -1366,7 +1244,7 @@ https://github.com/addyosmani/jquery-plugin-patterns/blob/master/jquery.widget-f
             var track = Mashup.Player.audioPlayerGraphical('getTrackByIndex', this.options.track);
             for (var j = this.startBeat; j < this.startBeat + this.numberOfBeats; j++) {
                 if (track[j] !== 0) {
-                    return false;
+                    throw 'The sample overlaps another sample on the same track.'
                 }
             }
             
@@ -1641,6 +1519,7 @@ https://github.com/addyosmani/jquery-plugin-patterns/blob/master/jquery.widget-f
             zoomInButton: null,
             zoomOutButton: null,
             dropFileBox: null,
+            audioPlayer: null
         },
 
         _create: function () {
@@ -1649,9 +1528,7 @@ https://github.com/addyosmani/jquery-plugin-patterns/blob/master/jquery.widget-f
             this.options.width = this.options.width ? this.options.width : $(this.element[0]).width();
             this.options.height = this.options.height ? this.options.height : $(this.element[0]).height();
 
-            //this.audioPlayer = $('#audioViewerControls').audioPlayerWaveformViewer();
-            var $audioPlayerDiv = $('<div/>').attr('id', 'audioViewerPlayer').addClass('hide');
-            $('body').append($audioPlayerDiv);
+            var $audioPlayerDiv = $(this.options.audioPlayer);            
             this.$audioPlayer = $audioPlayerDiv.audioPlayerWaveformViewer();
 
             //Only add spacebar functionality if it's not already taken by the main player
@@ -1732,23 +1609,6 @@ https://github.com/addyosmani/jquery-plugin-patterns/blob/master/jquery.widget-f
         _isSelected: function () {
             return this.processTrim.isSelected();
         },
-        _getStartTime: function (forceIsSelected) {
-            if (this._isSelected() || forceIsSelected) {
-                //current start time of audio as shown in the viewer.
-                var currViewerStartTime = this.startWaveform / this.totalWaveformLength * this.duration;
-                return (this.processTrim.getMin() / this.options.width) * this.duration * this.waveformFraction + currViewerStartTime;
-            }
-            return this.startWaveform / this.totalWaveformLength * this.duration;
-        },
-        _getEndTime: function (forceIsSelected) {
-            if (this._isSelected() || forceIsSelected) {
-                //current start time of audio as shown in the viewer.
-                var currViewerStartTime = this.startWaveform / this.totalWaveformLength * this.duration;
-                return (this.processTrim.getMax() / this.options.width) * this.duration * this.waveformFraction + currViewerStartTime;
-            }
-            return this.endWaveform / this.totalWaveformLength * this.duration;
-
-        },
         _getSelectedWaveformStart: function () {
             return Math.floor(this.totalWaveformLength * (this.processTrim.getMin() / this.options.width) * this.waveformFraction) + this.startWaveform;
         },
@@ -1802,7 +1662,7 @@ https://github.com/addyosmani/jquery-plugin-patterns/blob/master/jquery.widget-f
             this.processTrim.clear();
         },
         calculateBpm: function (numberOfBeats) {
-            var sampleDuration = this._getEndTime() - this._getStartTime();
+            var sampleDuration = this.getEndTime() - this.getStartTime();
             return numberOfBeats / sampleDuration * 60;
         },
         //clears the waveform from the viewer
@@ -1828,6 +1688,14 @@ https://github.com/addyosmani/jquery-plugin-patterns/blob/master/jquery.widget-f
                     }
                     var reader = new FileReader();
                     reader.onloadend = function (e) {
+                        //remove drop label
+                        if ($('#dropInfo').length > 0) {
+                            $('#dropInfo').remove();
+                        }
+                        if ($('#audioViewerControls').length > 0) {
+                            $('#audioViewerControls').show(); 
+                        }
+                        //Show drag icon
                         Mashup.EndLoading();
                         self.loadSampleFromArrayBuffer(this.result);
                     };
@@ -1855,6 +1723,23 @@ https://github.com/addyosmani/jquery-plugin-patterns/blob/master/jquery.widget-f
             $(e.target).removeClass('over');
             return false;
         },
+        getStartTime: function (forceIsSelected) {
+            if (this._isSelected() || forceIsSelected) {
+                //current start time of audio as shown in the viewer.
+                var currViewerStartTime = this.startWaveform / this.totalWaveformLength * this.duration;
+                return (this.processTrim.getMin() / this.options.width) * this.duration * this.waveformFraction + currViewerStartTime;
+            }
+            return this.startWaveform / this.totalWaveformLength * this.duration;
+        },
+        getEndTime: function (forceIsSelected) {
+            if (this._isSelected() || forceIsSelected) {
+                //current start time of audio as shown in the viewer.
+                var currViewerStartTime = this.startWaveform / this.totalWaveformLength * this.duration;
+                return (this.processTrim.getMax() / this.options.width) * this.duration * this.waveformFraction + currViewerStartTime;
+            }
+            return this.endWaveform / this.totalWaveformLength * this.duration;
+
+        },
         getSampleBuffer: function () {
             return this.buffer.getChannelData(0);
         },
@@ -1874,10 +1759,23 @@ https://github.com/addyosmani/jquery-plugin-patterns/blob/master/jquery.widget-f
             if (byteLength > Mashup.properties.maxSampleLength) {
                 throw "Sample is too long.  Please keep sample under 90 seconds";
             }
-
+       
             var equalizedArray = this.normalizeSample();
-            var blob = new Blob([equalizedArray], { type: 'text/plain' });
-            return blob;
+            //Encode the samples to a wave file to be used for web audio api
+            var buffer = PCMData.encode({
+                data: equalizedArray,
+                sampleRate: 44100,
+                channelCount: 2,
+                bytesPerSample: 2
+            });
+            var audio = document.createElement('audio');
+            var bb = new Blob([buffer], {type: 'audio/wav:base64'});
+            var url = window.URL.createObjectURL(bb);
+            audio.src = url;
+            audio.play();
+            return url;
+            //var blob = new Blob([equalizedArray], { type: 'text/plain' });
+            //return blob;
         },
         isPlaying: function () {
             return !this.$playBtn.children('i').hasClass('icon-play');
@@ -1933,8 +1831,8 @@ https://github.com/addyosmani/jquery-plugin-patterns/blob/master/jquery.widget-f
         },
         movePlayIndicator: function () {
             //even though nothing is selected, we want the player to act that way
-            var startTime = this._getStartTime(true);
-            var endTime = this._getEndTime(true);
+            var startTime = this.getStartTime(true);
+            var endTime = this.getEndTime(true);
             this.$audioPlayer.audioPlayerWaveformViewer('option', 'waveformStart', startTime);
             this.$audioPlayer.audioPlayerWaveformViewer('option', 'waveformEnd', endTime);
 
@@ -2096,25 +1994,26 @@ Mashup.properties = {
         hoverClass: 'hover',
         drop: function (event, ui) { 
             //If we are dragging from sample a sample, we need to get new start and end times.
-            var sampleOptions = {};
-            if ($(ui.draggable.context).attr('data-waveform')) {
-                //configure sampleOptions here
-                $('#sampleWaveform').audioViewer('setPlayTimes');
-                sampleOptions.trimStart = $('#audioViewerControls').audioPlayerWaveformViewer('option', 'waveformStart');
-                sampleOptions.playDuration = $('#audioViewerControls').audioPlayerWaveformViewer('option', 'waveformEnd') - sampleOptions.trimStart;
-                Mashup.MoveSampleToPlayer(sampleOptions, $self);
-            }
-            var options = $(ui.draggable.context).attr('data-sample-options');
-            sampleOptions = JSON.parse(options);
             var $self = $(this);
+            var options = $(ui.draggable.context).attr('data-sample-options');
+            var sampleOptions = JSON.parse(options);
             sampleOptions.track = Mashup.GetTrack($self);
             sampleOptions.rhythmIndex = Mashup.GetStartBeat($self);
+            if ($(ui.draggable.context).attr('data-waveform')) {
+                //configure sampleOptions here                
+                sampleOptions.playDuration = $('#sampleWaveform').audioViewer('getEndTime') - $('#sampleWaveform').audioViewer('getStartTime');
+                sampleOptions.trimStart = 0;                
+                sampleOptions.id = new Date().getTime();
+                sampleOptions.waveFormElement = '#sampleWaveform';
+                Mashup.MoveSampleToPlayer(sampleOptions, $self);
+                return;
+            }
             if(typeof sampleOptions.playDuration === 'undefined')
                 sampleOptions.playDuration = sampleOptions.duration;
             Mashup.MoveSampleToPlayer(sampleOptions, $self);
         }
     },
-    maxSampleLength: 41000 * 4 * 90,//41kHz * 32bits * number of seconds allowed
+    maxSampleLength: 44100 * 4 * 90,//44.1kHz * 32bits * number of seconds allowed
     mouseCaptureOffset: 0,
     mouseCapture: null,
     currentSlider: null,
@@ -2170,17 +2069,14 @@ Mashup.GenericErrorMessage = function (jqXHR, textStatus, errorThrown) {
 //Use with graphical player
 Mashup.MoveSampleToPlayer = function (sampleOptions, $playerDiv) {
     $playerDiv.droppable("destroy");
-
-    var sample = $playerDiv.audioSampleGraphical(sampleOptions);
-
-    //If sample did not initiate due to error, show error and skip adding the sample to player
-    if (!sample.audioSampleGraphical('getInitiated')) {
-        sample.audioSampleGraphical('destroy');
-        Mashup.ShowMessage("Schnikes!", "The sample overlaps another sample on the same track.  Please find a shorter sample or place the sample on a different track.");
-    }
-    else {
+    try {
+        var sample = $playerDiv.audioSampleGraphical(sampleOptions);
         Mashup.Player.audioPlayerGraphical('addSample', sample);
-    }
+    } catch(ex) {
+        if (sample)
+            sample.audioSampleGraphical('destroy');
+        Mashup.ShowMessage("Schnikes!", ex);
+    }        
 };
 
 Mashup.GetTrack = function ($playerDiv) {

@@ -11,6 +11,7 @@
             zoomInButton: null,
             zoomOutButton: null,
             dropFileBox: null,
+            audioPlayer: null
         },
 
         _create: function () {
@@ -19,9 +20,7 @@
             this.options.width = this.options.width ? this.options.width : $(this.element[0]).width();
             this.options.height = this.options.height ? this.options.height : $(this.element[0]).height();
 
-            //this.audioPlayer = $('#audioViewerControls').audioPlayerWaveformViewer();
-            var $audioPlayerDiv = $('<div/>').attr('id', 'audioViewerPlayer').addClass('hide');
-            $('body').append($audioPlayerDiv);
+            var $audioPlayerDiv = $(this.options.audioPlayer);            
             this.$audioPlayer = $audioPlayerDiv.audioPlayerWaveformViewer();
 
             //Only add spacebar functionality if it's not already taken by the main player
@@ -102,23 +101,6 @@
         _isSelected: function () {
             return this.processTrim.isSelected();
         },
-        _getStartTime: function (forceIsSelected) {
-            if (this._isSelected() || forceIsSelected) {
-                //current start time of audio as shown in the viewer.
-                var currViewerStartTime = this.startWaveform / this.totalWaveformLength * this.duration;
-                return (this.processTrim.getMin() / this.options.width) * this.duration * this.waveformFraction + currViewerStartTime;
-            }
-            return this.startWaveform / this.totalWaveformLength * this.duration;
-        },
-        _getEndTime: function (forceIsSelected) {
-            if (this._isSelected() || forceIsSelected) {
-                //current start time of audio as shown in the viewer.
-                var currViewerStartTime = this.startWaveform / this.totalWaveformLength * this.duration;
-                return (this.processTrim.getMax() / this.options.width) * this.duration * this.waveformFraction + currViewerStartTime;
-            }
-            return this.endWaveform / this.totalWaveformLength * this.duration;
-
-        },
         _getSelectedWaveformStart: function () {
             return Math.floor(this.totalWaveformLength * (this.processTrim.getMin() / this.options.width) * this.waveformFraction) + this.startWaveform;
         },
@@ -172,7 +154,7 @@
             this.processTrim.clear();
         },
         calculateBpm: function (numberOfBeats) {
-            var sampleDuration = this._getEndTime() - this._getStartTime();
+            var sampleDuration = this.getEndTime() - this.getStartTime();
             return numberOfBeats / sampleDuration * 60;
         },
         //clears the waveform from the viewer
@@ -191,13 +173,21 @@
             if (files.length > 0) {
                 if (window.FormData !== undefined) {
                     var file = files[0];
-                    if (file.type !== "audio/mp3" && file.type !== "audio/ogg") {
-                        Mashup.ShowMessage("Invalid File Type", "File must be an .mp3 or .ogg file", Mashup.properties.messageType.Error);
+                    if (file.type !== "audio/mp3" && file.type !== "audio/ogg" && file.type !== "audio/wav") {
+                        Mashup.ShowMessage("Invalid File Type", "File must be an .mp3, .ogg, or .wav file", Mashup.properties.messageType.Error);
                         Mashup.EndLoading();
                         return;
                     }
                     var reader = new FileReader();
                     reader.onloadend = function (e) {
+                        //remove drop label
+                        if ($('#dropInfo').length > 0) {
+                            $('#dropInfo').remove();
+                        }
+                        if ($('#audioViewerControls').length > 0) {
+                            $('#audioViewerControls').show(); 
+                        }
+                        //Show drag icon
                         Mashup.EndLoading();
                         self.loadSampleFromArrayBuffer(this.result);
                     };
@@ -225,6 +215,23 @@
             $(e.target).removeClass('over');
             return false;
         },
+        getStartTime: function (forceIsSelected) {
+            if (this._isSelected() || forceIsSelected) {
+                //current start time of audio as shown in the viewer.
+                var currViewerStartTime = this.startWaveform / this.totalWaveformLength * this.duration;
+                return (this.processTrim.getMin() / this.options.width) * this.duration * this.waveformFraction + currViewerStartTime;
+            }
+            return this.startWaveform / this.totalWaveformLength * this.duration;
+        },
+        getEndTime: function (forceIsSelected) {
+            if (this._isSelected() || forceIsSelected) {
+                //current start time of audio as shown in the viewer.
+                var currViewerStartTime = this.startWaveform / this.totalWaveformLength * this.duration;
+                return (this.processTrim.getMax() / this.options.width) * this.duration * this.waveformFraction + currViewerStartTime;
+            }
+            return this.endWaveform / this.totalWaveformLength * this.duration;
+
+        },
         getSampleBuffer: function () {
             return this.buffer.getChannelData(0);
         },
@@ -244,10 +251,20 @@
             if (byteLength > Mashup.properties.maxSampleLength) {
                 throw "Sample is too long.  Please keep sample under 90 seconds";
             }
-
+       
             var equalizedArray = this.normalizeSample();
-            var blob = new Blob([equalizedArray], { type: 'text/plain' });
-            return blob;
+            //Encode the samples to a wave file to be used for web audio api
+            var buffer = PCMData.encode({
+                data: equalizedArray,
+                sampleRate: 44100,
+                channelCount: 2,
+                bytesPerSample: 2
+            });            
+            //var bb = new Blob([buffer], {type: 'audio/wav;base64'});
+            return buffer;
+            //var newbuffer = btoa(buffer);
+            //var blob = new Blob([equalizedArray], { type: 'text/plain' });
+            //return blob;
         },
         isPlaying: function () {
             return !this.$playBtn.children('i').hasClass('icon-play');
@@ -303,8 +320,8 @@
         },
         movePlayIndicator: function () {
             //even though nothing is selected, we want the player to act that way
-            var startTime = this._getStartTime(true);
-            var endTime = this._getEndTime(true);
+            var startTime = this.getStartTime(true);
+            var endTime = this.getEndTime(true);
             this.$audioPlayer.audioPlayerWaveformViewer('option', 'waveformStart', startTime);
             this.$audioPlayer.audioPlayerWaveformViewer('option', 'waveformEnd', endTime);
 

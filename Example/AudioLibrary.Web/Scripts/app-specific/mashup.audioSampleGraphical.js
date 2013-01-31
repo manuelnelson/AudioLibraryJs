@@ -48,21 +48,16 @@ https://github.com/addyosmani/jquery-plugin-patterns/blob/master/jquery.widget-f
             this.isGraphical = true;
             this._calculateStartBeat();
             this._calculateNumberOfBeats();
-            if (!this._animate()) {
-                return;
-            };
+            this._animate();
             $.Mashup.audioSample.prototype._create.call(this);
             this._handleEvents();            
             this._loadEffect();
-            
             this._initiated = true;
         },
 
         _animate: function () {
             //If we are unable to make room, we need to forget everything and return
-            if (!this._makeTrackRoom()) {
-                return false;
-            };
+            this._makeTrackRoom();
             
             //New HTML
             this.$sampleContainer = $("<div />").append("<span id='" + this.options.id + "'>" + this.options.sampleName + "</span><a class='icon-remove icon-white pull-right'></a>")
@@ -74,7 +69,6 @@ https://github.com/addyosmani/jquery-plugin-patterns/blob/master/jquery.widget-f
             this.element.append(this.$sampleContainer).fadeIn(function () {
                 that.animate({ width: '100%', height: '30px' });
             });
-            return true;
         },
         _loadEffect: function () {
             //Load effect
@@ -109,7 +103,7 @@ https://github.com/addyosmani/jquery-plugin-patterns/blob/master/jquery.widget-f
             var track = Mashup.Player.audioPlayerGraphical('getTrackByIndex', this.options.track);
             for (var j = this.startBeat; j < this.startBeat + this.numberOfBeats; j++) {
                 if (track[j] !== 0) {
-                    return false;
+                    throw 'The sample overlaps another sample on the same track.'
                 }
             }
             
