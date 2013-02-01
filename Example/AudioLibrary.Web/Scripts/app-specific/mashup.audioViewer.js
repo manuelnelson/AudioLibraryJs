@@ -252,16 +252,16 @@
                 throw "Sample is too long.  Please keep sample under 90 seconds";
             }
        
-            var equalizedArray = this.normalizeSample();
+            return this.normalizeSample();
             //Encode the samples to a wave file to be used for web audio api
-            var buffer = PCMData.encode({
-                data: equalizedArray,
-                sampleRate: 44100,
-                channelCount: 2,
-                bytesPerSample: 2
-            });            
+            //var buffer = PCMData.encode({
+            //    data: equalizedArray,
+            //    sampleRate: 44100,
+            //    channelCount: 2,
+            //    bytesPerSample: 2
+            //});            
             //var bb = new Blob([buffer], {type: 'audio/wav;base64'});
-            return buffer;
+            //return buffer;
             //var newbuffer = btoa(buffer);
             //var blob = new Blob([equalizedArray], { type: 'text/plain' });
             //return blob;

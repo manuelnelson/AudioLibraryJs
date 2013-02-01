@@ -329,7 +329,6 @@
     <Content Include="Scripts\parsely.js" />
     <Content Include="Scripts\processing-1.4.1.js" />
     <Content Include="Scripts\underscore.js" />
-    <Content Include="Scripts\pcmdata.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

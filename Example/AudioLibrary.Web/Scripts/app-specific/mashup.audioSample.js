@@ -71,20 +71,14 @@
             var self = this;
             if (!this.options.fileName) {
                 //No filename. This sample is coming from an audioViewer. The buffer will be added manually. 
-                //url = $(this.options.waveFormElement).audioViewer('getFinalSampleBuffer');
                 var buffer = $(this.options.waveFormElement).audioViewer('getFinalSampleBuffer');
-                var bb = new Blob([btoa(buffer)], { type: 'audio/wav' });
-                var fileReader = new FileReader();
-                fileReader.onload = function () {
-                    var arrayBuffer = this.result;
-                    try {
-                        self.buffer = Mashup.Player.audioPlayerGraphical('getContext').createBuffer(arrayBuffer, self.options.mono);
-                    } catch(ex) {
-                        Mashup.ShowMessage("Schnikes!", ex);
-                    }
-                    
+                self.buffer = Mashup.Player.audioPlayerGraphical('getContext').createBuffer(1, buffer.length, 44100);
+                self.buffer.getChannelData(0).set(buffer);
+                newSample = {
+                    id: self.options.id,
+                    buffer: self.buffer
                 };
-                fileReader.readAsArrayBuffer(bb);                
+                self.isGraphical ? Mashup.Player.audioPlayerGraphical('updateLoadedSample', newSample) : Mashup.Player.audioPlayer('updateLoadedSample', newSample);
                 return;
             } else {
                 url = Mashup.properties.sampleFilePath + this.options.fileName;
